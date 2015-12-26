@@ -78,7 +78,7 @@ mkdir -p $build/bin
 GOBIN=$build/bin export GOBIN
 GOROOT=$cache/$ver/go export GOROOT
 GOPATH=$build/.heroku/g export GOPATH
-PATH=$GOROOT/bin:$PATH
+PATH=$GOROOT/bin:$GOBIN:$PATH export PATH
 
 # Setup build dir
 p=$GOPATH/src/$name
@@ -88,12 +88,16 @@ cp -R $build/* $p
 cd $p
 
 # Set things up to support gb project format
-GOPATH="$GOPATH/src"
-ln -s $GOPATH/vendor/src/* $GOPATH/src/
+# GOPATH="$GOPATH/src"
+# ln -s $GOPATH/vendor/src/* $GOPATH/src/
 
-# Build
+echo "------> Installing gb"
+go get github.com/constabulary/gb/...
+
 echo "------> Running: gb build"
 gb build
+
+mv bin/* $build/bin
 
 # Cleanup
 rm -rf $build/.heroku
